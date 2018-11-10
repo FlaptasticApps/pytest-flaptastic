@@ -1,4 +1,5 @@
 venv
 pytest_flaptastic.egg-info
 __pycache__
+.idea
 
