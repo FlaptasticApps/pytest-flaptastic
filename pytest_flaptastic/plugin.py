@@ -26,9 +26,9 @@ def pytest_addoption(parser):
     group._addoption('--flaptastic-secret',
                      action='store', type=str, dest='flaptastic_secret',
                      default=None, help='Secret key for flaptastic')
-    group._addoption('--flaptastic-microservice',
-                     action='store', type=str, dest='flaptastic_microservice',
-                     default=None, help='Identifier for microservice under test')
+    group._addoption('--flaptastic-service',
+                     action='store', type=str, dest='flaptastic_service',
+                     default=None, help='Identifier for service under test')
     group._addoption('--flaptastic-link',
                      action='store', type=str, dest='flaptastic_link',
                      default=None, help='Optional link to CI page with full details')
@@ -46,15 +46,15 @@ def send_flap(item, call):
     commit_id = item.session.config.getoption("commit_id")
     branch = item.session.config.getoption("branch")
     flaptastic_secret = item.session.config.getoption("flaptastic_secret")
-    flaptastic_microservice = item.session.config.getoption("flaptastic_microservice")
+    flaptastic_service = item.session.config.getoption("flaptastic_service")
     flaptastic_link = item.session.config.getoption("flaptastic_link")
     host = "api.flaptastic.com"
     port = 6789
     client_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     payload = {
-        "microservice": flaptastic_microservice,
+        "service": flaptastic_service,
         "commit_id": commit_id,
-        "branch": branch
+        "branch": branch,
         "link": flaptastic_link,
         "test_results": {
             "exception": str(call.excinfo.value),
