@@ -1,5 +1,5 @@
 def test_simple_assertion1():
-    assert False
+    assert True
 
 
 def test_simple_assertion2():
@@ -7,7 +7,7 @@ def test_simple_assertion2():
 
 
 def test_simple_assertion3():
-    assert False
+    assert True
 
 
 def test_simple_assertion4():
