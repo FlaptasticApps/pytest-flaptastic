@@ -68,7 +68,7 @@ def get_option(args_namespace, option_name):
     """
     return args_namespace.__dict__.get(
         option_name,
-        os.getenv(option_name.upper(), '')
+        os.getenv(option_name.upper())
     )
 
 
