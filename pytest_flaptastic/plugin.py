@@ -83,7 +83,7 @@ def pytest_cmdline_main(config):
         ))
 
 
-def pytest_terminal_summary(terminalreporter, exitstatus):
+def pytest_terminal_summary(terminalreporter, exitstatus=None):
     occasionally_deliver(terminalreporter.config.option, True)
 
 
