@@ -38,7 +38,7 @@ def pytest_addoption(parser):
                      action='store', type=str, dest='flaptastic_link',
                      default=None, help='Optional link to CI page with full details')
     group._addoption('--flaptastic-verbosity',
-                     action='store', type=str, dest='verbosity',
+                     action='store', type=str, dest='flaptastic_verbosity',
                      default='1', help='Stdout verbosity. 0=none 1=minimal 2=everything')
 
 
