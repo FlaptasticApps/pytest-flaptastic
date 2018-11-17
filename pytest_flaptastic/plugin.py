@@ -147,12 +147,12 @@ def occasionally_deliver(namespace_args, force_dump=False):
         if r.status_code == 201:
             num_results_sent = num_results_sent + len(test_results)
             if int(get_option(namespace_args, "flaptastic_verbosity")) > 2:
-                eprint("{} test results sent to Flaptastic".format(
+                eprint("\n{} test results sent to Flaptastic".format(
                     len(test_results)
                 ))
         else:
             if int(get_option(namespace_args, "flaptastic_verbosity")) > 0:
-                eprint("Failure to deliver test results to Flaptastic: {} - {}".format(
+                eprint("\nFailure to deliver test results to Flaptastic: {} - {}".format(
                     r.status_code,
                     r.content.decode()
                 ))
