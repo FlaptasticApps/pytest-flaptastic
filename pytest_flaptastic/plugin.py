@@ -4,6 +4,7 @@ import time
 import sys
 import os
 import collections
+import re
 
 """
 A pytest plugin for Flaptastic.
@@ -11,6 +12,16 @@ A pytest plugin for Flaptastic.
 
 queue = collections.deque()
 page_size = 3
+num_results_sent = 0
+param_map = {
+    'flaptastic_organization_id': '--flaptastic-organization-id',
+    'flaptastic_api_token': '--flaptastic-api-token',
+    'flaptastic_commit_id': '--flaptastic-commit-id',
+    'flaptastic_branch': '--flaptastic-branch',
+    'flaptastic_service': '--flaptastic-service',
+    'flaptastic_link': '--flaptastic-link',
+    'flaptastic_verbosity': '--flaptastic-verbosity'
+}
 
 
 def eprint(*args, **kwargs):
@@ -39,7 +50,7 @@ def pytest_addoption(parser):
                      default=None, help='Optional link to CI page with full details')
     group._addoption('--flaptastic-verbosity',
                      action='store', type=str, dest='flaptastic_verbosity',
-                     default='1', help='Stdout verbosity. 0=none 1=minimal 2=everything')
+                     default=os.getenv('FLAPTASTIC_VERBOSITY', '1'), help='Stdout verbosity. 0=none 1=minimal 2=everything')
 
 
 def missing_options_detected(args_namespace):
@@ -50,15 +61,16 @@ def get_missing_params(args_namespace):
     required_options = [
         'flaptastic_organization_id',
         'flaptastic_api_token',
-        'flaptastic_commit_id',
         'flaptastic_branch',
-        'flaptastic_service',
-        'flaptastic_link'
+        'flaptastic_service'
     ]
     missing = []
     for option_name in required_options:
         if not get_option(args_namespace, option_name):
-            missing.append(option_name)
+            missing.append("{} ({})".format(
+                param_map[option_name],
+                option_to_env_name(option_name)
+            ))
     return missing
 
 
@@ -66,25 +78,29 @@ def get_option(args_namespace, option_name):
     """
     Get an option from either the CLI or the environment.
     """
-    return args_namespace.__dict__.get(
-        option_name,
-        os.getenv(option_name.upper())
-    )
+    result = args_namespace.__dict__.get(option_name)
+    if not result:
+        result = os.getenv(option_to_env_name(option_name))
+    return result
+
+
+def option_to_env_name(option_name):
+    return re.sub('[^a-z]', '_', option_name).upper()
 
 
 def pytest_cmdline_main(config):
     missing = get_missing_params(config.option)
-    if not missing:
+    if missing:
         if int(get_option(config.option, "flaptastic_verbosity")) > 0:
-            eprint("Flaptastic plugin activated.")
-    else:
-        eprint("Flaptastic plugin is not activated. Missing params: {}".format(
-            missing
-        ))
+            eprint("Flaptastic plugin will not send test results. "
+                   "Missing params: {} https://www.flaptastic.com/documentation".format(missing))
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus=None):
-    occasionally_deliver(terminalreporter.config.option, True)
+    if not missing_options_detected(terminalreporter.config.option):
+        occasionally_deliver(terminalreporter.config.option, True)
+        if int(get_option(terminalreporter.config.option, "flaptastic_verbosity")) > 1:
+            eprint("\n{} test results sent to Flaptastic in total.".format(num_results_sent))
 
 
 def pytest_runtest_makereport(item, call):
@@ -106,6 +122,7 @@ def send_test_result(item, call):
 
 
 def occasionally_deliver(namespace_args, force_dump=False):
+    global num_results_sent
     if len(queue) > page_size or force_dump:
         test_results = []
         for i in range(len(queue) if force_dump else page_size):
@@ -128,7 +145,8 @@ def occasionally_deliver(namespace_args, force_dump=False):
             timeout=3
         )
         if r.status_code == 201:
-            if int(get_option(namespace_args, "flaptastic_verbosity")) > 1:
+            num_results_sent = num_results_sent + len(test_results)
+            if int(get_option(namespace_args, "flaptastic_verbosity")) > 2:
                 eprint("{} test results sent to Flaptastic".format(
                     len(test_results)
                 ))
