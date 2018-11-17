@@ -1,1 +1,11 @@
 language: python
+python:
+  - "3.6"
+install:
+  - pip install -r requirements.txt
+script: pytest
+deploy:
+  provider: pypi
+  user: flaptastic
+  password:
+    secure: W9Z62ivuCDWzIOlJNCyi3BRHjiMM/gEa+Tj1as6Zv81PsTLiM66mTFY6SxjD3lqiZal9tNQLej53TlVovh3zSKEgVJ6172cJZn+M4VYptP1hzqm0sZ/ABfFfJrD3fVaJvG5762yy+EnWN0pJvk11Y5mfHFhHcmhpeZ4IXkfwNTk8uELlTMhc+gR5igcqeu5/pFjuXCs1flWUdBSgNslXULmVA+mIZM6P9zYT536ca3TrCwr5k5c3xr8nILhbmrFC+Mtic+m8v9zwHHv7NTZzGsBBX0fEcv2/LAqoRR894h6AIr/6UJef0czz+AfYq+54lEqGGwcIFCAbdeP/R93R+zc7V748xdIvKyWOMulS2dc91jtHCPdXiaRKHYne4GPtth5SReVCmatkH+WSjHKWE0TbWSEhAPL60NJHOIVIxM9dsi0/CluOxsnOBU8zexn2PFAFpfaeta7FtW54ik5IFUP+zbyJegBzrSmXxua268UtPLi+tvQuyD7DdZ9TyiQsdYfsu4SyfZCCKOdN3KxNO4nbMYNyh0y3yzDGmr+jotb3/xMNtGZL3AsPniSf7jugGcpd57PYuhZERJeTg9R4tZn8wsFcyocPdZHC/ZC138vi3d2cqyLPbQ9/e0h4GasG0mrIQxZmUUosrKCqNOjMxCZpHnawcQ2FnQuOCNO0S1w=
