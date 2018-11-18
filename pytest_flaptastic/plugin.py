@@ -100,7 +100,7 @@ def pytest_terminal_summary(terminalreporter, exitstatus=None):
     if not missing_options_detected(terminalreporter.config.option):
         occasionally_deliver(terminalreporter.config.option, True)
         if int(get_option(terminalreporter.config.option, "flaptastic_verbosity")) > 1:
-            eprint("\n{} test results sent to Flaptastic in total.".format(num_results_sent))
+            eprint("\n{} test error and failure results sent to Flaptastic in total.".format(num_results_sent))
 
 
 def pytest_runtest_makereport(item, call):
@@ -110,12 +110,14 @@ def pytest_runtest_makereport(item, call):
 
 
 def send_test_result(item, call):
-    status = "success"
     if call.excinfo:
         if call.excinfo.type.__name__ == 'AssertionError':
             status = "failed"
         else:
             status = "error"
+    else:
+        # If the test was successful, don't report to flaptastic.
+        return
     test_result = {
       "exception": None if call.excinfo is None else emit_nice_exception_info(call),
       "file": item.location[0],
@@ -169,7 +171,7 @@ def occasionally_deliver(namespace_args, force_dump=False):
         if r.status_code == 201:
             num_results_sent = num_results_sent + len(test_results)
             if int(get_option(namespace_args, "flaptastic_verbosity")) > 2:
-                eprint("\n{} test results sent to Flaptastic".format(
+                eprint("\n{} error and failure test results sent to Flaptastic".format(
                     len(test_results)
                 ))
         else:
