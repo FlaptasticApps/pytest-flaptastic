@@ -42,5 +42,5 @@ def test_missing_options_detected_when_none_are_passed():
 
 
 # def test_code_that_triggers_an_exception():
-#     # intentionally_raise()
+#     intentionally_raise()
 #     assert False

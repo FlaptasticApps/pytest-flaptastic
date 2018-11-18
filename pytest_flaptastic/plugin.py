@@ -131,16 +131,16 @@ def send_test_result(item, call):
 
 def emit_nice_exception_info(call):
     result = ""
-    dir_context = os.path.dirname(os.path.realpath(__file__))
-    dir_context = os.path.abspath(os.path.join(dir_context, os.pardir))
     for i in range(len(call.excinfo.traceback)-1, -1, -1):
         entry = call.excinfo.traceback[i]
-        relative_path = re.sub('^'+dir_context+'/', '', entry.path.strpath)
-        this_row = "- " + relative_path + ":{}\n".format(entry.lineno)
+        this_row = "- " + entry.path.strpath + ":{}\n".format(entry.lineno)
         if len(result) == 0:
+            line_number = entry.lineno - entry.relline
             for line in entry.source.lines:
-                this_row += "   " + line + "\n"
-            this_row += "-> " + call.excinfo.typename + ': ' + str(call.excinfo.value)
+                this_row += "{}.   ".format(line_number) + line + "\n"
+                line_number += 1
+            this_row = this_row.strip()
+            this_row += " <- " + call.excinfo.typename + ': ' + str(call.excinfo.value)
         result = this_row.strip() + "\n" + result
     return result.strip()
 
