@@ -38,19 +38,3 @@ def test_missing_options_detected_when_none_are_passed():
     assert missing_options_detected(
         Namespace(**{})
     )
-
-
-# def test_simple_assertion2():
-#     assert True
-#
-#
-# def test_simple_assertion3():
-#     assert False
-#
-#
-# def test_simple_assertion4():
-#     assert True
-#
-#
-# def test_simple_assertion5():
-#     assert True
