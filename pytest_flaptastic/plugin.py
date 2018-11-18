@@ -110,15 +110,36 @@ def pytest_runtest_makereport(item, call):
 
 
 def send_test_result(item, call):
+    status = "success"
+    if call.excinfo:
+        if call.excinfo.type.__name__ == 'AssertionError':
+            status = "failed"
+        else:
+            status = "error"
     test_result = {
-      "exception": None if call.excinfo is None else str(call.excinfo.value),
+      "exception": None if call.excinfo is None else emit_nice_exception_info(call),
       "file": item.location[0],
       "line": call.excinfo.traceback[len(call.excinfo.traceback)-1].lineno if call.excinfo else item.location[1],
       "name": item.name,
-      "status": "failed" if call.excinfo is not None else "success"
+      "status": status
     }
     queue.append(test_result)
     occasionally_deliver(item.session.config.known_args_namespace)
+
+
+def emit_nice_exception_info(call):
+    result = ""
+    dir_context = os.path.dirname(os.path.realpath(__file__))
+    dir_context = os.path.abspath(os.path.join(dir_context, os.pardir))
+    for i in range(len(call.excinfo.traceback)-1, -1, -1):
+        entry = call.excinfo.traceback[i]
+        relative_path = re.sub('^'+dir_context+'/', '', entry.path.strpath)
+        this_row = "- " + relative_path + ":{}\n".format(entry.lineno)
+        if len(result) == 0:
+            for line in entry.source.lines:
+                this_row += "   " + line + "\n"
+        result = this_row.strip() + "\n" + result
+    return result.strip()
 
 
 def occasionally_deliver(namespace_args, force_dump=False):
@@ -142,7 +163,7 @@ def occasionally_deliver(namespace_args, force_dump=False):
             headers={
                 'Bearer': get_option(namespace_args, "flaptastic_api_token")
             },
-            timeout=3
+            timeout=5
         )
         if r.status_code == 201:
             num_results_sent = num_results_sent + len(test_results)
