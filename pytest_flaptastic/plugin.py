@@ -119,30 +119,41 @@ def send_test_result(item, call):
         # If the test was successful, don't report to flaptastic.
         return
     test_result = {
-      "exception": None if call.excinfo is None else emit_nice_exception_info(call),
-      "file": item.location[0],
-      "line": call.excinfo.traceback[len(call.excinfo.traceback)-1].lineno if call.excinfo else item.location[1],
-      "name": item.name,
-      "status": status
+        "exception": get_problem_description(call),
+        "file": item.location[0],
+        "line": call.excinfo.traceback[len(call.excinfo.traceback)-1].lineno if call.excinfo else item.location[1],
+        "name": item.name,
+        "status": status,
+        "file_stack": get_file_stack(call),
+        "exception_site": get_exception_site(call)
     }
     queue.append(test_result)
     occasionally_deliver(item.session.config.known_args_namespace)
 
 
-def emit_nice_exception_info(call):
-    result = ""
+def get_problem_description(call):
+    return call.excinfo.typename + ': ' + str(call.excinfo.value)
+
+
+def get_file_stack(call):
+    result = []
     for i in range(len(call.excinfo.traceback)-1, -1, -1):
         entry = call.excinfo.traceback[i]
-        this_row = "- " + entry.path.strpath + ":{}\n".format(entry.lineno)
-        if len(result) == 0:
-            line_number = entry.lineno - entry.relline
-            for line in entry.source.lines:
-                this_row += "{}.   ".format(line_number) + line + "\n"
-                line_number += 1
-            this_row = this_row.strip()
-            this_row += " <- " + call.excinfo.typename + ': ' + str(call.excinfo.value)
-        result = this_row.strip() + "\n" + result
-    return result.strip()
+        result.append(entry.path.strpath)
+    return result
+
+
+def get_exception_site(call):
+    result = []
+    entry = call.excinfo.traceback[len(call.excinfo.traceback)-1]
+    line_number = entry.lineno - entry.relline
+    for line in entry.source.lines:
+        result.append({
+            "line_number": line_number,
+            "line": line
+        })
+        line_number += 1
+    return result
 
 
 def occasionally_deliver(namespace_args, force_dump=False):
