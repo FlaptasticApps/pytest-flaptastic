@@ -138,6 +138,7 @@ def emit_nice_exception_info(call):
         if len(result) == 0:
             for line in entry.source.lines:
                 this_row += "   " + line + "\n"
+            this_row += "-> " + call.excinfo.typename + ': ' + str(call.excinfo.value)
         result = this_row.strip() + "\n" + result
     return result.strip()
 

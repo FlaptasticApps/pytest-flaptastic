@@ -4,6 +4,7 @@ from pytest_flaptastic.plugin import option_to_env_name
 from pytest_flaptastic.plugin import get_option
 from pytest_flaptastic.plugin import missing_options_detected
 from pytest_flaptastic.plugin import param_map
+from pytest_flaptastic.helper import intentionally_raise
 from unittest import mock
 
 
@@ -38,3 +39,8 @@ def test_missing_options_detected_when_none_are_passed():
     assert missing_options_detected(
         Namespace(**{})
     )
+
+
+# def test_code_that_triggers_an_exception():
+#     # intentionally_raise()
+#     assert False
