@@ -116,16 +116,15 @@ def send_test_result(item, call):
         else:
             status = "error"
     else:
-        # If the test was successful, don't report to flaptastic.
-        return
+        status = "success"
     test_result = {
-        "exception": get_problem_description(call),
+        "exception": get_problem_description(call) if call.excinfo else None,
         "file": item.location[0],
         "line": call.excinfo.traceback[len(call.excinfo.traceback)-1].lineno if call.excinfo else item.location[1],
         "name": item.name,
         "status": status,
-        "file_stack": get_file_stack(call),
-        "exception_site": get_exception_site(call)
+        "file_stack": get_file_stack(call) if call.excinfo else None,
+        "exception_site": get_exception_site(call) if call.excinfo else None
     }
     queue.append(test_result)
     occasionally_deliver(item.session.config.known_args_namespace)
