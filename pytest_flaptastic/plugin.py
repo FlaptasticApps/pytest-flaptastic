@@ -167,7 +167,7 @@ def occasionally_deliver(namespace_args, force_dump=False):
             "link": get_option(namespace_args, "flaptastic_link"),
             "organization_id": get_option(namespace_args, "flaptastic_organization_id"),
             "service": get_option(namespace_args, "flaptastic_service"),
-            "timestamp": str(int(time.time())),
+            "timestamp": int(time.time()),
             "test_results": test_results
         }
         r = requests.post(
