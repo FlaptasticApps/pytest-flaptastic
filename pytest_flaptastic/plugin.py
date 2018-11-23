@@ -116,7 +116,7 @@ def send_test_result(item, call):
         else:
             status = "error"
     else:
-        status = "success"
+        status = "passed"
     test_result = {
         "exception": get_problem_description(call) if call.excinfo else None,
         "file": item.location[0],
