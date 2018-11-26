@@ -39,9 +39,15 @@ from unittest import mock
 #     assert missing_options_detected(
 #         Namespace(**{})
 #     )
+#
+#
+# def test_code_that_triggers_an_exception():
+#     #intentionally_raise()
+#     assert True
+#     # assert False
 
+class TestClass:
 
-def test_code_that_triggers_an_exception():
-    #intentionally_raise()
-    assert True
-    # assert False
+    def test_getme_no_access_token_returns_400(self):
+        x = True
+        assert x

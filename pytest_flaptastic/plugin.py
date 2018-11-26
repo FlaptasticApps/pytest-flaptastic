@@ -5,6 +5,7 @@ import sys
 import os
 import collections
 import re
+import pytest
 
 """
 A pytest plugin for Flaptastic.
@@ -96,6 +97,40 @@ def pytest_cmdline_main(config):
                    "Missing params: {} https://www.flaptastic.com/documentation".format(missing))
 
 
+def load_skipped_tests(namespace_args):
+    try:
+        host = os.getenv('FLAPTASTIC_HOST', 'https://frontend-api.flaptastic.com')
+        url = "{}/api/v1/skippedtests/{}/{}".format(
+            host,
+            get_option(namespace_args, "flaptastic_organization_id"),
+            get_option(namespace_args, "flaptastic_service")
+        )
+        resp = requests.get(
+            url,
+            headers={
+                'Bearer': get_option(namespace_args, "flaptastic_api_token")
+            },
+            timeout=5
+        )
+        return resp.json()
+    except:
+        return {}
+
+
+def pytest_collection_modifyitems(config, items):
+    skipped_tests = load_skipped_tests(config.known_args_namespace)
+    flaptastic_skip = pytest.mark.skip(reason="Skipped via flaptastic")
+    for item in items:
+        file = item.location[0]
+        name = item.location[2]
+        if file in skipped_tests:
+            # Determine if the given test name is one of the tests skipped in this file
+            for skipped_test_doc in skipped_tests[file]:
+                if skipped_test_doc['name'] == name:
+                    item.add_marker(flaptastic_skip)
+                    break
+
+
 def pytest_terminal_summary(terminalreporter, exitstatus=None):
     if not missing_options_detected(terminalreporter.config.option):
         occasionally_deliver(terminalreporter.config.option, True)
@@ -170,8 +205,12 @@ def occasionally_deliver(namespace_args, force_dump=False):
             "timestamp": int(time.time()),
             "test_results": test_results
         }
+        host = os.getenv('FLAPTASTIC_HOST', 'https://frontend-api.flaptastic.com')
+        url = "{}/api/v1/ingest".format(
+            host
+        )
         r = requests.post(
-            'https://frontend-api.flaptastic.com/api/v1/ingest',
+            url,
             json=doc,
             headers={
                 'Bearer': get_option(namespace_args, "flaptastic_api_token")
