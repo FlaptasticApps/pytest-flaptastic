@@ -156,7 +156,7 @@ def send_test_result(item, call):
         "exception": get_problem_description(call) if call.excinfo else None,
         "file": item.location[0],
         "line": call.excinfo.traceback[len(call.excinfo.traceback)-1].lineno if call.excinfo else item.location[1],
-        "name": item.name,
+        "name": item.location[2].replace('.', '::'),
         "status": status,
         "file_stack": get_file_stack(call) if call.excinfo else None,
         "exception_site": get_exception_site(call) if call.excinfo else None

@@ -48,6 +48,11 @@ from unittest import mock
 
 class TestClass:
 
-    def test_getme_no_access_token_returns_400(self):
+    def test_some_test_inside_a_class(self):
         x = True
-        assert x
+        assert False
+
+
+def test_some_test_outside_a_class():
+    x = True
+    assert x
