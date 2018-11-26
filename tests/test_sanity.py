@@ -50,7 +50,7 @@ class TestClass:
 
     def test_some_test_inside_a_class(self):
         x = True
-        assert False
+        assert x
 
 
 def test_some_test_outside_a_class():
