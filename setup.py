@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pytest-flaptastic",
-    version="0.0.23",
+    version="0.0.24",
     author="Jonathan Block",
     author_email="block.jon@gmail.com",
     description="Flaptastic py.test plugin",

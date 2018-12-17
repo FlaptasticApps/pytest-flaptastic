@@ -39,7 +39,7 @@ A simple project might have a CircleCI 2.0 YML that ultimately does a 'make test
 In CircleCI 2.0, we must map some of Circle's variables to Flaptastic varibles and include the Flaptastic organization id like this:
 ```
       - run:
-          name: Run PHPUnit With Flaptastic
+          name: Run PyTest With Flaptastic
           environment:
             FLAPTASTIC_ORGANIZATION_ID: "<your org id goes here>"
             FLAPTASTIC_VERBOSITY: 1
