@@ -94,7 +94,7 @@ def pytest_cmdline_main(config):
     if missing:
         if int(get_option(config.option, "flaptastic_verbosity")) > 0:
             eprint("Flaptastic plugin will not send test results. "
-                   "Missing params: {} https://www.flaptastic.com/documentation".format(missing))
+                   "Missing params: {} https://www.flaptastic.com/api".format(missing))
 
 
 def load_skipped_tests(namespace_args):
@@ -135,7 +135,7 @@ def pytest_terminal_summary(terminalreporter, exitstatus=None):
     if not missing_options_detected(terminalreporter.config.option):
         occasionally_deliver(terminalreporter.config.option, True)
         if int(get_option(terminalreporter.config.option, "flaptastic_verbosity")) > 1:
-            eprint("\n{} test error and failure results sent to Flaptastic in total.".format(num_results_sent))
+            eprint("\n{} test results sent to Flaptastic in total.".format(num_results_sent))
 
 
 def pytest_runtest_makereport(item, call):
