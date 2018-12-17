@@ -30,3 +30,34 @@ Example call pattern:
       FLAPTASTIC_COMMIT_ID=2feffa9bf0bf3fc48f9f9e89c5386afe0cb77124 \
       FLAPTASTIC_LINK=http://jenkins.example.com \
       py.test
+
+## CircleCI 2.0 Configuration
+A simple project might have a CircleCI 2.0 YML that ultimately does a 'make test' like this:
+```
+      - run: make test
+```
+In CircleCI 2.0, we must map some of Circle's variables to Flaptastic varibles and include the Flaptastic organization id like this:
+```
+      - run:
+          name: Run PHPUnit With Flaptastic
+          environment:
+            FLAPTASTIC_ORGANIZATION_ID: "<your org id goes here>"
+            FLAPTASTIC_VERBOSITY: 1
+          command: |
+            echo 'export FLAPTASTIC_BRANCH=$CIRCLE_BRANCH' >> $BASH_ENV
+            echo 'export FLAPTASTIC_LINK=$CIRCLE_BUILD_URL' >> $BASH_ENV
+            echo 'export FLAPTASTIC_SERVICE=$CIRCLE_PROJECT_REPONAME' >> $BASH_ENV
+            echo 'export FLAPTASTIC_COMMIT_ID=$CIRCLE_SHA1' >> $BASH_ENV
+            source $BASH_ENV
+            make test
+```
+Please be sure to pass your selected organization ID as the actual ID value from your Flaptastic account as a string with double quotes. At the time of this writing, CircleCI will botch our 64-bit integer ids without the double quotes.
+
+Finally, find your Flaptastic API token and then go to your CircleCI project page. Navigate to the project environment variables screen and create an enviornment variable called "FLAPTASTIC_API_TOKEN" and then paste your token as the value.
+
+![alt text](https://s3.amazonaws.com/www.flaptastic.com/images/circle.png "Screenshot of how to register the secret token value in CircleCI")
+
+
+## License
+
+pytest-flaptastic is available under the MIT License.
