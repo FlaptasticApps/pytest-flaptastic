@@ -13,6 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/blockjon/pytest-flaptastic",
     packages=setuptools.find_packages(),
+    install_requires=[
+      'requests>=2.18.4'
+    ],
     entry_points={"pytest11": ["name_of_plugin = pytest_flaptastic.plugin"]},
     classifiers=[
         "Framework :: Pytest",
