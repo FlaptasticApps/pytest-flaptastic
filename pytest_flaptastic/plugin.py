@@ -68,8 +68,7 @@ def get_missing_params(args_namespace):
     missing = []
     for option_name in required_options:
         if not get_option(args_namespace, option_name):
-            missing.append("{} ({})".format(
-                param_map[option_name],
+            missing.append("{}".format(
                 option_to_env_name(option_name)
             ))
     return missing
@@ -94,7 +93,7 @@ def pytest_cmdline_main(config):
     if missing:
         if int(get_option(config.option, "flaptastic_verbosity")) > 0:
             eprint("Flaptastic plugin will not send test results. "
-                   "Missing params: {} https://www.flaptastic.com/api".format(missing))
+                   "Missing environment variables: {} https://www.flaptastic.com/api".format(missing))
 
 
 def load_skipped_tests(namespace_args):
