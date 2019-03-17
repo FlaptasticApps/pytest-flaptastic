@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pytest-flaptastic",
-    version="0.0.24",
+    version="0.0.25",
     author="Jonathan Block",
-    author_email="block.jon@gmail.com",
+    author_email="jon.block@flaptastic.com",
     description="Flaptastic py.test plugin",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/blockjon/pytest-flaptastic",
+    url="https://github.com/FlaptasticApps/pytest-flaptastic",
     packages=setuptools.find_packages(),
     install_requires=[
       'requests>=2.18.4'
